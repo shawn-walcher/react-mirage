@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
+  let [users, setUsers] = useState([]);
+  let [loading, setLoading] = useState(true);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    await fetch("/v1/api/users")
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data.users);
+        setLoading(false);
+      });
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h2>Mirage test with users.</h2>
       </header>
+      <main className="App-body">
+        {loading ? "Loading" : "Hello"}
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      </main>
     </div>
   );
 }
